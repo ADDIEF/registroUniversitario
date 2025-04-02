@@ -22,11 +22,6 @@ public class EstudianteServiceImpl implements IEstudianteService { // Define la 
         this.estudianteRepository = estudianteRepository; // Asigna el repositorio de estudiantes a la variable de instancia
     }
     
-    @PostConstruct // Anotación que indica que este método debe ejecutarse después de la construcción del bean
-    public void init() { // Método para inicializar datos de ejemplo
-        estudianteRepository.init(); // Llama al método init del repositorio de estudiantes
-    }
-
     @Override // Anotación que indica que este método sobrescribe un método de la interfaz
     public List<EstudianteDTO> obtenerTodosLosEstudiantes() { // Método para obtener una lista de todos los EstudianteDTO
         List<Estudiante> estudiantes = estudianteRepository.findAll(); // Obtiene todos los estudiantes del repositorio
@@ -60,5 +55,54 @@ public class EstudianteServiceImpl implements IEstudianteService { // Define la 
                 .fechaNacimiento(estudianteDTO.getFechaNacimiento()) // Asigna la fecha de nacimiento
                 .numeroInscripcion(estudianteDTO.getNumeroInscripcion()) // Asigna el número de inscripción
                 .build(); // Construye el objeto Estudiante
+                
     }
+
+//--------------------------------------- PRACTICA 1 ----------------------------------------------------------
+    @Override
+    public EstudianteDTO crearEstudiante(EstudianteDTO estudianteDTO) {
+        Estudiante estudiante = convertToEntity(estudianteDTO);
+        Estudiante guardado = estudianteRepository.save(estudiante);
+        return convertToDTO(guardado);
+    }
+
+    @Override
+    public EstudianteDTO obtenerEstudiantePorId(Long id) {
+    Estudiante estudiante = estudianteRepository.findById(id);
+    if (estudiante == null) {
+        throw new RuntimeException("Estudiante no encontrado");
+    }
+        return convertToDTO(estudiante);
+    }
+
+
+    @Override
+public EstudianteDTO actualizarEstudiante(Long id, EstudianteDTO estudianteDTO) {
+    Estudiante existente = estudianteRepository.findById(id);
+    if (existente == null) {
+        throw new RuntimeException("Estudiante no encontrado");
+    }
+
+    // MODIFICAMOS el objeto original
+    existente.setNombre(estudianteDTO.getNombre());
+    existente.setApellido(estudianteDTO.getApellido());
+    existente.setEmail(estudianteDTO.getEmail());
+    existente.setFechaNacimiento(estudianteDTO.getFechaNacimiento());
+    existente.setNumeroInscripcion(estudianteDTO.getNumeroInscripcion());
+
+    Estudiante actualizado = estudianteRepository.save(existente);
+    return convertToDTO(actualizado);
+}
+
+    
+
+    @Override
+    public void eliminarEstudiante(Long id) {
+    if (!estudianteRepository.existsById(id)) {
+        throw new RuntimeException("Estudiante no encontrado");
+    }
+        estudianteRepository.deleteById(id);
+    }
+
+
 }

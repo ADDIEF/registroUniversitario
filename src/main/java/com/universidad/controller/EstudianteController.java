@@ -26,4 +26,37 @@ public class EstudianteController { // Define la clase EstudianteController
         return ResponseEntity.ok(estudiantes); // Retorna una respuesta HTTP 200 OK con la lista de estudiantes
     }
 
+//------------------------------------ PRACTICA 1 -----------------------------------------------------------------------------------------------------------
+    // POST
+    @PostMapping("/estudiantes")
+    public ResponseEntity<EstudianteDTO> crearEstudiante(@RequestBody EstudianteDTO estudianteDTO) {
+    EstudianteDTO nuevoEstudiante = estudianteService.crearEstudiante(estudianteDTO);
+    return ResponseEntity.status(201).body(nuevoEstudiante);
+    }
+
+    // GET
+    @GetMapping("/estudiantes/{id}")
+    public ResponseEntity<EstudianteDTO> obtenerEstudiantePorId(@PathVariable Long id) {
+    EstudianteDTO estudiante = estudianteService.obtenerEstudiantePorId(id);
+    return ResponseEntity.ok(estudiante);
+    }
+
+    //PUT
+    @PutMapping("/estudiantes/{id}")
+    public ResponseEntity<EstudianteDTO> actualizarEstudiante(
+        @PathVariable Long id,
+        @RequestBody EstudianteDTO estudianteDTO) {
+    EstudianteDTO actualizado = estudianteService.actualizarEstudiante(id, estudianteDTO);
+    return ResponseEntity.ok(actualizado);
+    }
+
+    //DELETE
+    @DeleteMapping("/estudiantes/{id}")
+    public ResponseEntity<Void> eliminarEstudiante(@PathVariable Long id) {
+    estudianteService.eliminarEstudiante(id);
+    return ResponseEntity.noContent().build(); // 204 No Content
+}
+
+
+
 }
