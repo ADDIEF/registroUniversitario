@@ -68,8 +68,3 @@ Las pruebas fueron realizadas con la herramienta Postman para verificar:
 Este proyecto fue realizado por **ADRIANA VALERIA FERNANDEZ FLORES** como la parte 3 de la práctica 1.  
 Gracias por revisar el código. ✨
 
----
-
-## 🔗 Enlace del repositorio
-
-[https://github.com/TU_USUARIO/RegistroUniversitario](https://github.com/TU_USUARIO/RegistroUniversitario)
