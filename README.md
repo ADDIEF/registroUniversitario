@@ -32,7 +32,7 @@ La API permite:
 
 1. Clona el repositorio:
    ```bash
-   git clone https://github.com/TU_USUARIO/RegistroUniversitario.git
+   git clone https://github.com/ADDIEF/RegistroUniversitario.git
    ```
 
 2. Entra al proyecto:
