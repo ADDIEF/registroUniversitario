@@ -1,52 +1,124 @@
-package com.universidad.service.impl; // Define el paquete al que pertenece esta clase
+package com.universidad.service.impl;
 
-import com.universidad.dto.EstudianteDTO; // Importa la clase EstudianteDTO del paquete dto
-import com.universidad.model.Estudiante; // Importa la clase Estudiante del paquete model
-import com.universidad.repository.EstudianteRepository; // Importa la clase EstudianteRepository del paquete repository
-import com.universidad.service.IEstudianteService; // Importa la interfaz IEstudianteService del paquete service
+import com.universidad.dto.EstudianteDTO;
+import com.universidad.model.Estudiante;
+import com.universidad.model.Materia;
+import com.universidad.repository.EstudianteRepository;
+import com.universidad.service.IEstudianteService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-import org.springframework.beans.factory.annotation.Autowired; // Importa la anotación Autowired de Spring
-import org.springframework.stereotype.Service; // Importa la anotación Service de Spring
+import java.util.List;
+import java.util.Optional; // Importamos Optional
+import java.util.stream.Collectors;
 
-import java.util.List; // Importa la interfaz List para manejar listas
-import java.util.stream.Collectors; // Importa la clase Collectors para manejar colecciones
-
-@Service // Anotación que indica que esta clase es un servicio de Spring
-public class EstudianteServiceImpl implements IEstudianteService { // Define la clase EstudianteServiceImpl que implementa la interfaz IEstudianteService
+@Service
+public class EstudianteServiceImpl implements IEstudianteService {
 
     @Autowired
-    private EstudianteRepository estudianteRepository; // Inyección de dependencias del repositorio de estudiantes
-    
+    private EstudianteRepository estudianteRepository;
 
     @Override
     public List<EstudianteDTO> obtenerTodosLosEstudiantes() {
-        // Obtiene todos los estudiantes y los convierte a DTO
-        return estudianteRepository.findAll().stream() // Obtiene todos los estudiantes de la base de datos
-                .map(this::convertToDTO) // Convierte cada Estudiante a EstudianteDTO
-                .collect(Collectors.toList()); // Recoge los resultados en una lista
+        return estudianteRepository.findAll().stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
     }
 
-    // Método auxiliar para convertir entidad a DTO
-    private EstudianteDTO convertToDTO(Estudiante estudiante) { // Método para convertir un Estudiante a EstudianteDTO
-        return EstudianteDTO.builder() // Usa el patrón builder para crear un EstudianteDTO
-                .id(estudiante.getId()) // Asigna el ID
-                .nombre(estudiante.getNombre()) // Asigna el nombre
-                .apellido(estudiante.getApellido()) // Asigna el apellido
-                .email(estudiante.getEmail()) // Asigna el email
-                .fechaNacimiento(estudiante.getFechaNacimiento()) // Asigna la fecha de nacimiento
-                .numeroInscripcion(estudiante.getNumeroInscripcion()) // Asigna el número de inscripción
-                .build(); // Construye el objeto EstudianteDTO
+    @Override
+    public EstudianteDTO obtenerEstudiantePorNumeroInscripcion(String numeroInscripcion) {
+        Estudiante estudiante = estudianteRepository.findByNumeroInscripcion(numeroInscripcion);
+        return convertToDTO(estudiante);
     }
-    
-    // Método auxiliar para convertir DTO a entidad
-    private Estudiante convertToEntity(EstudianteDTO estudianteDTO) { // Método para convertir un EstudianteDTO a Estudiante
-        return Estudiante.builder() // Usa el patrón builder para crear un Estudiante
-                .id(estudianteDTO.getId()) // Asigna el ID
-                .nombre(estudianteDTO.getNombre()) // Asigna el nombre
-                .apellido(estudianteDTO.getApellido()) // Asigna el apellido
-                .email(estudianteDTO.getEmail()) // Asigna el email
-                .fechaNacimiento(estudianteDTO.getFechaNacimiento()) // Asigna la fecha de nacimiento
-                .numeroInscripcion(estudianteDTO.getNumeroInscripcion()) // Asigna el número de inscripción
-                .build(); // Construye el objeto Estudiante
+
+    @Override
+    public List<EstudianteDTO> obtenerEstudianteActivo() {
+        return estudianteRepository.findAll().stream()
+                .filter(estudiante -> "activo".equalsIgnoreCase(estudiante.getEstado()))
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Materia> obtenerMateriasDeEstudiante(Long estudianteId) {
+        Estudiante estudiante = estudianteRepository.findById(estudianteId)
+                .orElseThrow(() -> new RuntimeException("Estudiante no encontrado"));
+        return estudiante.getMaterias();
+    }
+
+    @Override
+    public EstudianteDTO crearEstudiante(EstudianteDTO estudianteDTO) {
+        Estudiante estudiante = convertToEntity(estudianteDTO);
+        Estudiante estudianteGuardado = estudianteRepository.save(estudiante);
+        return convertToDTO(estudianteGuardado);
+    }
+
+    @Override
+    public EstudianteDTO actualizarEstudiante(Long id, EstudianteDTO estudianteDTO) {
+        Estudiante estudianteExistente = estudianteRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Estudiante no encontrado"));
+
+        estudianteExistente.setNombre(estudianteDTO.getNombre());
+        estudianteExistente.setApellido(estudianteDTO.getApellido());
+        estudianteExistente.setEmail(estudianteDTO.getEmail());
+        estudianteExistente.setFechaNacimiento(estudianteDTO.getFechaNacimiento());
+        estudianteExistente.setNumeroInscripcion(estudianteDTO.getNumeroInscripcion());
+        estudianteExistente.setEstado(estudianteDTO.getEstado());
+        estudianteExistente.setUsuarioAlta(estudianteDTO.getUsuarioAlta());
+        estudianteExistente.setFechaAlta(estudianteDTO.getFechaAlta());
+        estudianteExistente.setUsuarioModificacion(estudianteDTO.getUsuarioModificacion());
+        estudianteExistente.setFechaModificacion(estudianteDTO.getFechaModificacion());
+        estudianteExistente.setUsuarioBaja(estudianteDTO.getUsuarioBaja());
+        estudianteExistente.setFechaBaja(estudianteDTO.getFechaBaja());
+        estudianteExistente.setMotivoBaja(estudianteDTO.getMotivoBaja());
+
+        Estudiante estudianteActualizado = estudianteRepository.save(estudianteExistente);
+        return convertToDTO(estudianteActualizado);
+    }
+
+    @Override
+    public Optional<List<EstudianteDTO>> obtenerEstudiantesPorMateria(String nombreMateria) {
+    return estudianteRepository.findByMateriasNombreMateria(nombreMateria)
+            .map(estudiantes -> estudiantes.stream()
+                    .map(this::convertToDTO)
+                    .collect(Collectors.toList()));
+}
+
+
+    private EstudianteDTO convertToDTO(Estudiante estudiante) {
+        return EstudianteDTO.builder()
+                .id(estudiante.getId())
+                .nombre(estudiante.getNombre())
+                .apellido(estudiante.getApellido())
+                .email(estudiante.getEmail())
+                .fechaNacimiento(estudiante.getFechaNacimiento())
+                .numeroInscripcion(estudiante.getNumeroInscripcion())
+                .estado(estudiante.getEstado())
+                .usuarioAlta(estudiante.getUsuarioAlta())
+                .fechaAlta(estudiante.getFechaAlta())
+                .usuarioModificacion(estudiante.getUsuarioModificacion())
+                .usuarioBaja(estudiante.getUsuarioBaja())
+                .fechaBaja(estudiante.getFechaBaja())
+                .motivoBaja(estudiante.getMotivoBaja())
+                .build();
+    }
+
+    private Estudiante convertToEntity(EstudianteDTO estudianteDTO) {
+        return Estudiante.builder()
+                .id(estudianteDTO.getId())
+                .nombre(estudianteDTO.getNombre())
+                .apellido(estudianteDTO.getApellido())
+                .email(estudianteDTO.getEmail())
+                .fechaNacimiento(estudianteDTO.getFechaNacimiento())
+                .numeroInscripcion(estudianteDTO.getNumeroInscripcion())
+                .estado(estudianteDTO.getEstado())
+                .usuarioAlta(estudianteDTO.getUsuarioAlta())
+                .fechaAlta(estudianteDTO.getFechaAlta())
+                .usuarioModificacion(estudianteDTO.getUsuarioModificacion())
+                .fechaModificacion(estudianteDTO.getFechaModificacion())
+                .usuarioBaja(estudianteDTO.getUsuarioBaja())
+                .fechaBaja(estudianteDTO.getFechaBaja())
+                .motivoBaja(estudianteDTO.getMotivoBaja())
+                .build();
     }
 }
