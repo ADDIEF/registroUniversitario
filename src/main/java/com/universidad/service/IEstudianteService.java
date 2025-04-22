@@ -1,66 +1,68 @@
-package com.universidad.service; // Define el paquete al que pertenece esta interfaz
+package com.universidad.service;
 
-import com.universidad.dto.EstudianteDTO; // Importa la clase EstudianteDTO del paquete dto
+import com.universidad.dto.EstudianteDTO;
+import com.universidad.dto.MateriaDTO;
 import com.universidad.model.Materia;
-import java.util.List; // Importa la interfaz List para manejar listas
-import java.util.Optional; // Importa Optional para manejar resultados opcionales
+import java.util.List;
+import java.util.Optional;
 
-public interface IEstudianteService { // Define la interfaz IEstudianteService
-
-    /**
-    * Obtiene todos los estudiantes.
-    * @return Lista de EstudianteDTO.
-    */
-    List<EstudianteDTO> obtenerTodosLosEstudiantes(); // Método para obtener una lista de todos los EstudianteDTO
+public interface IEstudianteService {
 
     /**
-    * Obtiene un estudiante activo.
-    * @return Lista de EstudianteDTO activos.
-    * @throws RuntimeException si no se encuentra el estudiante activo.
-    */
-    List<EstudianteDTO> obtenerEstudianteActivo(); // Método para obtener una lista de EstudianteDTO activos
+     * Obtiene todos los estudiantes.
+     * @return Lista de EstudianteDTO.
+     */
+    List<EstudianteDTO> obtenerTodosLosEstudiantes();
 
     /**
-    * Obtiene un estudiante por su número de inscripción.
-    * @param numeroInscripcion
-    * @return
-    */
-    EstudianteDTO obtenerEstudiantePorNumeroInscripcion(String numeroInscripcion); // Método para obtener un estudiante por su número de inscripción
+     * Obtiene estudiantes activos.
+     * @return Lista de EstudianteDTO activos.
+     */
+    List<EstudianteDTO> obtenerEstudianteActivo();
 
     /**
-    * Obtiene las materias de un estudiante por su ID.
-    * @param estudianteId ID del estudiante.
-    * @return Lista de materias del estudiante.
-    */
-    public List<Materia> obtenerMateriasDeEstudiante(Long estudianteId); 
-    // Método para obtener las materias de un estudiante por su ID
+     * Obtiene un estudiante por su número de inscripción.
+     * @param numeroInscripcion Número de inscripción.
+     * @return EstudianteDTO encontrado.
+     */
+    EstudianteDTO obtenerEstudiantePorNumeroInscripcion(String numeroInscripcion);
 
     /**
-    * Crea un nuevo estudiante.
-    * @param estudianteDTO DTO del estudiante a crear.
-    * @return EstudianteDTO creado.
-    */
-    EstudianteDTO crearEstudiante(EstudianteDTO estudianteDTO); // Método para crear un nuevo estudiante
+     * Obtiene las materias de un estudiante por su ID (modo directo).
+     * @param estudianteId ID del estudiante.
+     * @return Lista de materias asociadas.
+     */
+    List<Materia> obtenerMateriasDeEstudiante(Long estudianteId);
 
     /**
-    * Actualiza un estudiante existente.
-    * @param id ID del estudiante a actualizar.
-    * @param estudianteDTO DTO del estudiante con los nuevos datos.
-    * @return EstudianteDTO actualizado.
-    *
-    * @throws RuntimeException si el estudiante no se encuentra.
-    */
-    EstudianteDTO actualizarEstudiante(Long id, EstudianteDTO estudianteDTO); // Método para actualizar un estudiante existente
+     * Crea un nuevo estudiante.
+     * @param estudianteDTO Datos del nuevo estudiante.
+     * @return EstudianteDTO creado.
+     */
+    EstudianteDTO crearEstudiante(EstudianteDTO estudianteDTO);
 
     /**
-    * Elimina un estudiante por su ID.
-    * @param id ID del estudiante a eliminar.
-    */
-    
+     * Actualiza un estudiante existente.
+     * @param id ID del estudiante a actualizar.
+     * @param estudianteDTO Datos actualizados.
+     * @return EstudianteDTO actualizado.
+     */
+    EstudianteDTO actualizarEstudiante(Long id, EstudianteDTO estudianteDTO);
+
+    // --------------------- Operaciones opcionales con Optional ---------------------
+
     /**
-    * ---------- tarea grupo: obtiene los estudiantes por el nombre de una materia. ----------------- 
-    * @param nombreMateria Nombre de la materia.
-    * @return Optional con la lista de EstudianteDTO o vacío si no se encuentran estudiantes.
-    */
-    Optional<List<EstudianteDTO>> obtenerEstudiantesPorMateria(String nombreMateria); // Método para obtener estudiantes por materia
+     * Obtiene los estudiantes inscritos en una materia (por nombre de la materia).
+     * @param nombreMateria Nombre de la materia.
+     * @return Lista de EstudianteDTO o vacío si no hay estudiantes.
+     */
+    Optional<List<EstudianteDTO>> obtenerEstudiantesPorMateria(String nombreMateria);
+
+    /**
+     * Obtiene las materias en las que está inscrito un estudiante por su ID.
+     * @param idEstudiante ID del estudiante.
+     * @return Lista de MateriaDTO o vacío si no hay materias.
+     */
+    Optional<List<MateriaDTO>> obtenerMateriasPorEstudiante(Long idEstudiante);
+
 }

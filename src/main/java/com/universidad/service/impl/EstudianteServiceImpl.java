@@ -1,6 +1,7 @@
 package com.universidad.service.impl;
 
 import com.universidad.dto.EstudianteDTO;
+import com.universidad.dto.MateriaDTO;
 import com.universidad.model.Estudiante;
 import com.universidad.model.Materia;
 import com.universidad.repository.EstudianteRepository;
@@ -9,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional; // Importamos Optional
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -20,7 +21,8 @@ public class EstudianteServiceImpl implements IEstudianteService {
 
     @Override
     public List<EstudianteDTO> obtenerTodosLosEstudiantes() {
-        return estudianteRepository.findAll().stream()
+        return estudianteRepository.findAll()
+                .stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
@@ -33,7 +35,8 @@ public class EstudianteServiceImpl implements IEstudianteService {
 
     @Override
     public List<EstudianteDTO> obtenerEstudianteActivo() {
-        return estudianteRepository.findAll().stream()
+        return estudianteRepository.findAll()
+                .stream()
                 .filter(estudiante -> "activo".equalsIgnoreCase(estudiante.getEstado()))
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
@@ -78,12 +81,21 @@ public class EstudianteServiceImpl implements IEstudianteService {
 
     @Override
     public Optional<List<EstudianteDTO>> obtenerEstudiantesPorMateria(String nombreMateria) {
-    return estudianteRepository.findByMateriasNombreMateria(nombreMateria)
-            .map(estudiantes -> estudiantes.stream()
-                    .map(this::convertToDTO)
-                    .collect(Collectors.toList()));
-}
+        return estudianteRepository.findByMateriasNombreMateria(nombreMateria)
+                .map(estudiantes -> estudiantes.stream()
+                        .map(this::convertToDTO)
+                        .collect(Collectors.toList()))
+                .filter(lista -> !lista.isEmpty()); // lista no vacía
+    }
 
+    @Override
+    public Optional<List<MateriaDTO>> obtenerMateriasPorEstudiante(Long idEstudiante) {
+        return estudianteRepository.findMateriasByEstudianteId(idEstudiante)
+                .map(materias -> materias.stream()
+                        .map(this::convertirMateriaADTO)
+                        .collect(Collectors.toList()))
+                .filter(lista -> !lista.isEmpty()); // lista no vacía
+    }
 
     private EstudianteDTO convertToDTO(Estudiante estudiante) {
         return EstudianteDTO.builder()
@@ -97,6 +109,7 @@ public class EstudianteServiceImpl implements IEstudianteService {
                 .usuarioAlta(estudiante.getUsuarioAlta())
                 .fechaAlta(estudiante.getFechaAlta())
                 .usuarioModificacion(estudiante.getUsuarioModificacion())
+                .fechaModificacion(estudiante.getFechaModificacion())
                 .usuarioBaja(estudiante.getUsuarioBaja())
                 .fechaBaja(estudiante.getFechaBaja())
                 .motivoBaja(estudiante.getMotivoBaja())
@@ -119,6 +132,15 @@ public class EstudianteServiceImpl implements IEstudianteService {
                 .usuarioBaja(estudianteDTO.getUsuarioBaja())
                 .fechaBaja(estudianteDTO.getFechaBaja())
                 .motivoBaja(estudianteDTO.getMotivoBaja())
+                .build();
+    }
+
+    private MateriaDTO convertirMateriaADTO(Materia materia) {
+        return MateriaDTO.builder()
+                .id(materia.getId())
+                .nombreMateria(materia.getNombreMateria())
+                .codigoUnico(materia.getCodigoUnico())
+                .creditos(materia.getCreditos())
                 .build();
     }
 }
