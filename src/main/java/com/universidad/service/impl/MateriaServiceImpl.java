@@ -4,11 +4,15 @@ import com.universidad.model.Materia;
 import com.universidad.repository.MateriaRepository;
 import com.universidad.service.IMateriaService;
 import com.universidad.dto.MateriaDTO;
+import com.universidad.dto.UnidadTematicaDTO;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -84,4 +88,33 @@ public class MateriaServiceImpl implements IMateriaService {
     public void eliminarMateria(Long id) {
         materiaRepository.deleteById(id);
     }
+
+   // TAREA GRUPO
+   @Override
+   @Transactional
+   public List<MateriaDTO> listarMateriasConUnidades() {
+       return materiaRepository.findAll().stream().map(materia -> {
+           MateriaDTO dto = MateriaDTO.builder()
+                   .id(materia.getId())
+                   .nombreMateria(materia.getNombreMateria())
+                   .codigoUnico(materia.getCodigoUnico())
+                   .creditos(materia.getCreditos())
+                   .prerequisitos(materia.getPrerequisitos() != null ?
+                           materia.getPrerequisitos().stream().map(Materia::getId).collect(java.util.stream.Collectors.toList()) : null)
+                   .esPrerequisitoDe(materia.getEsPrerequisitoDe() != null ?
+                           materia.getEsPrerequisitoDe().stream().map(Materia::getId).collect(java.util.stream.Collectors.toList()) : null)
+                   .unidadesTematicas(materia.getUnidades() != null ?
+                           materia.getUnidades().stream().map(unidad ->
+                                   com.universidad.dto.UnidadTematicaDTO.builder()
+                                           .id(unidad.getId())
+                                           .titulo(unidad.getTitulo())
+                                           .descripcion(unidad.getDescripcion())
+                                           .build()
+                           ).collect(java.util.stream.Collectors.toList()) : null)
+                   .build();
+           return dto;
+       }).collect(java.util.stream.Collectors.toList());
+   }
+   
+
 }

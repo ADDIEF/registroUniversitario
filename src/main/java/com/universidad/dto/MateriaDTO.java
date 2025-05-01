@@ -28,4 +28,10 @@ public class MateriaDTO implements Serializable {
      * Lista de IDs de materias para las que esta materia es prerequisito.
      */
     private List<Long> esPrerequisitoDe;
+
+// ------------------------ TAREA -------------------------
+
+    private List<UnidadTematicaDTO> unidadesTematicas;
+
+    // TAREA GRUPO
 }

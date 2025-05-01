@@ -11,4 +11,7 @@ public interface IMateriaService {
     MateriaDTO crearMateria(MateriaDTO materia);
     MateriaDTO actualizarMateria(Long id, MateriaDTO materia);
     void eliminarMateria(Long id);
+
+    // TAREA GRUPO
+    List<MateriaDTO> listarMateriasConUnidades();  // Extra: Listar materias con unidades incluidas
 }

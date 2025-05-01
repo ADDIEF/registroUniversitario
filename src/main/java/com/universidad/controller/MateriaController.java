@@ -96,4 +96,14 @@ public class MateriaController {
         }
         return ResponseEntity.ok(circulo);
     }
+
+    // TAREA GRUPO
+    /**
+     * Endpoint adicional para listar materias con sus unidades temáticas
+     */
+    @GetMapping("/con-unidades")
+    public List<MateriaDTO> listarMateriasConUnidades() {
+        return materiaService.listarMateriasConUnidades();
+    }
+
 }
