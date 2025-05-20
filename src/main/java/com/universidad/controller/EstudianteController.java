@@ -26,6 +26,29 @@ public class EstudianteController { // Define la clase EstudianteController
     private final IEstudianteService estudianteService; // Declara una variable final para el servicio de estudiantes
     private static final Logger logger = LoggerFactory.getLogger(EstudianteController.class);
 
+
+    @GetMapping("/{id}")
+public ResponseEntity<EstudianteDTO> obtenerEstudiantePorId(@PathVariable Long id) {
+    Estudiante estudiante = estudianteService.obtenerEstudianteConBloqueo(id);
+    return ResponseEntity.ok(EstudianteDTO.builder()
+            .id(estudiante.getId())
+            .nombre(estudiante.getNombre())
+            .apellido(estudiante.getApellido())
+            .email(estudiante.getEmail())
+            .fechaNacimiento(estudiante.getFechaNacimiento())
+            .numeroInscripcion(estudiante.getNumeroInscripcion())
+            .estado(estudiante.getEstado())
+            .usuarioAlta(estudiante.getUsuarioAlta())
+            .fechaAlta(estudiante.getFechaAlta())
+            .usuarioModificacion(estudiante.getUsuarioModificacion())
+            .fechaModificacion(estudiante.getFechaModificacion())
+            .usuarioBaja(estudiante.getUsuarioBaja())
+            .fechaBaja(estudiante.getFechaBaja())
+            .motivoBaja(estudiante.getMotivoBaja())
+            .build());
+}
+
+
     @Autowired // Anotación que indica que el constructor debe ser usado para inyección de dependencias
     public EstudianteController(IEstudianteService estudianteService) { // Constructor que recibe el servicio de estudiantes
         this.estudianteService = estudianteService; // Asigna el servicio de estudiantes a la variable de instancia

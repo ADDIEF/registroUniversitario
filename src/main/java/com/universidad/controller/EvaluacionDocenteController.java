@@ -1,5 +1,6 @@
 package com.universidad.controller;
 
+import com.universidad.dto.EvaluacionDocenteDTO;
 import com.universidad.model.EvaluacionDocente;
 import com.universidad.service.IEvaluacionDocenteService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,10 +16,11 @@ public class EvaluacionDocenteController {
     private IEvaluacionDocenteService evaluacionDocenteService;
 
     @PostMapping
-    public ResponseEntity<EvaluacionDocente> crearEvaluacion(@RequestBody EvaluacionDocente evaluacion) {
-        EvaluacionDocente nueva = evaluacionDocenteService.crearEvaluacion(evaluacion);
-        return ResponseEntity.status(HttpStatus.CREATED).body(nueva);
+    public ResponseEntity<EvaluacionDocente> crearEvaluacion(@RequestBody EvaluacionDocenteDTO dto) {
+        EvaluacionDocente evaluacionCreada = evaluacionDocenteService.crearEvaluacionDesdeDTO(dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(evaluacionCreada);
     }
+
 
     @GetMapping("/docente/{docenteId}")
     public ResponseEntity<List<EvaluacionDocente>> obtenerEvaluacionesPorDocente(@PathVariable Long docenteId) {

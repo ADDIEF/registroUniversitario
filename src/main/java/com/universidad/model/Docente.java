@@ -1,5 +1,6 @@
 package com.universidad.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -15,17 +16,16 @@ import java.util.List;
 @AllArgsConstructor
 @SuperBuilder
 @Entity
-@Table(name = "docente") // Nombre de la tabla en la base de datos  
+@Table(name = "docente")
 public class Docente extends Persona {
-    @Column(name = "nro_empleado", nullable = false, unique = true) // Columna no nula y con valor único    
+
+    @Column(name = "nro_empleado", nullable = false, unique = true)
     private String nroEmpleado;
 
-    @Column(name = "departamento", nullable = false) // Columna no nula
+    @Column(name = "departamento", nullable = false)
     private String departamento;
 
-    /**
-     * Lista de evaluaciones asociadas al docente.
-     */
     @OneToMany(mappedBy = "docente", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<EvaluacionDocente> evaluaciones; // Lista de evaluaciones asociadas al docente
+    @JsonIgnore // 🔒 Evita serialización infinita
+    private List<EvaluacionDocente> evaluaciones;
 }

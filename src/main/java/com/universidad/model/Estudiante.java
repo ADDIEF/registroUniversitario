@@ -58,6 +58,14 @@ public class Estudiante extends Persona { // Define la clase Estudiante que exti
     @Basic(optional = false) // Columna no nula
     private LocalDate fechaAlta; // Campo para almacenar la fecha de alta del estudiante
     
+    @PrePersist
+    protected void onCreate() {
+        if (this.fechaAlta == null) {
+            this.fechaAlta = LocalDate.now();
+        }
+    }
+
+
     /**
      * Usuario que modificó al estudiante.
      */

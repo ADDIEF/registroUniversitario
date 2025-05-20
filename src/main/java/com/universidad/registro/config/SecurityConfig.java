@@ -75,10 +75,21 @@ public class SecurityConfig {
             .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/auth/**", "/api/public/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
+            .requestMatchers(
+                "/api/auth/**",
+                "/api/public/**",
+                "/swagger-ui/**",
+                "/swagger-ui.html",
+                "/swagger-resources/**",
+                "/v3/api-docs/**",
+                "/webjars/**"
+            ).permitAll()
+
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
                 .requestMatchers("/api/docentes/**").hasAnyRole("ADMIN", "DOCENTE")
                 .requestMatchers("/api/estudiantes/**").hasAnyRole("ADMIN", "DOCENTE", "ESTUDIANTE")
+                .requestMatchers("/api/materias/**").hasAnyRole("ADMIN", "DOCENTE")
+
                 .anyRequest().authenticated()
             );
 

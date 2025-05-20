@@ -1,25 +1,41 @@
 package com.universidad.model;
 
-import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 
-@Data
+import jakarta.persistence.*;
+import java.time.LocalDate;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Entity
-@Table(name = "evaluacion_docente") // Nombre de la tabla en la base de datos
-public class EvaluacionDocente { 
+@Table(name = "evaluacion_docente")
+public class EvaluacionDocente {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY) // mejor para rendimiento
     @JoinColumn(name = "docente_id", nullable = false)
+    @JsonIgnore // 🔁 Evita bucle infinito en la serialización
     private Docente docente;
 
-    private Integer puntuacion;
+    @Column(nullable = false)
+    private Integer puntaje;
+
+    @Column(length = 255)
     private String comentario;
-    private java.time.LocalDate fecha;
+
+    @Column(name = "fecha_evaluacion", nullable = false)
+    private LocalDate fechaEvaluacion;
+
 }

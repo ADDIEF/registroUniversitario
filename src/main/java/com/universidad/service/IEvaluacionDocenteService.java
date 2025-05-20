@@ -1,5 +1,6 @@
 package com.universidad.service;
 
+import com.universidad.dto.EvaluacionDocenteDTO;
 import com.universidad.model.EvaluacionDocente;
 import java.util.List;
 
@@ -8,4 +9,6 @@ public interface IEvaluacionDocenteService {
     List<EvaluacionDocente> obtenerEvaluacionesPorDocente(Long docenteId);
     EvaluacionDocente obtenerEvaluacionPorId(Long id);
     void eliminarEvaluacion(Long id);
+    EvaluacionDocente crearEvaluacionDesdeDTO(EvaluacionDocenteDTO dto);
+
 }

@@ -9,9 +9,14 @@ import com.universidad.dto.MateriaDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+//import jakarta.validation.Valid;
+import jakarta.validation.Valid;
+
 
 import java.util.List;
 
@@ -58,13 +63,15 @@ public class MateriaController {
         }
         return ResponseEntity.ok(materia);
     }
-
+//--------------------------------- NUEVO ------------------------------------|
     @PostMapping
-    public ResponseEntity<MateriaDTO> crearMateria(@RequestBody MateriaDTO materia) {
-        //MateriaDTO materiaDTO = new MateriaDTO(materia.getId(), materia.getNombre(), materia.getCodigoUnico());
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<MateriaDTO> crearMateria(@Valid @RequestBody MateriaDTO materia) {
         MateriaDTO nueva = materiaService.crearMateria(materia);
         return ResponseEntity.status(HttpStatus.CREATED).body(nueva);
     }
+//--------------------------------- NUEVO ------------------------------------|
+
 
     @PutMapping("/{id}")
     public ResponseEntity<MateriaDTO> actualizarMateria(@PathVariable Long id, @RequestBody MateriaDTO materia) {

@@ -73,18 +73,19 @@ public class EstudianteServiceImpl implements IEstudianteService { // Define la 
         return estudiante.getMaterias();
     }
 
+    
     @Override
     @CachePut(value = "estudiante", key = "#result.numeroInscripcion")
     @CacheEvict(value = {"estudiantes", "estudiantesActivos"}, allEntries = true)
-    public EstudianteDTO crearEstudiante(EstudianteDTO estudianteDTO) { // Método para crear un nuevo estudiante
-        
-        estudianteValidator.validacionCompletaEstudiante(estudianteDTO); // Valida el estudiante usando el validador
-
-        // Convierte el DTO a entidad, guarda el estudiante y lo convierte de nuevo a DTO
-        Estudiante estudiante = convertToEntity(estudianteDTO); // Convierte el EstudianteDTO a Estudiante
-        Estudiante estudianteGuardado = estudianteRepository.save(estudiante); // Guarda el estudiante en la base de datos
-        return convertToDTO(estudianteGuardado); // Convierte el Estudiante guardado a EstudianteDTO y lo retorna
+    public EstudianteDTO crearEstudiante(EstudianteDTO estudianteDTO) {
+        estudianteValidator.validacionCompletaEstudiante(estudianteDTO);
+        Estudiante estudiante = convertToEntity(estudianteDTO);
+        Estudiante estudianteGuardado = estudianteRepository.save(estudiante);
+        return convertToDTO(estudianteGuardado);
     }
+
+
+
 
     @Override
     @CachePut(value = "estudiante", key = "#id")
@@ -131,23 +132,25 @@ public class EstudianteServiceImpl implements IEstudianteService { // Define la 
     }
 
     // Método auxiliar para convertir entidad a DTO
-    private EstudianteDTO convertToDTO(Estudiante estudiante) { // Método para convertir un Estudiante a EstudianteDTO
-        return EstudianteDTO.builder() // Usa el patrón builder para crear un EstudianteDTO
-                .id(estudiante.getId()) // Asigna el ID
-                .nombre(estudiante.getNombre()) // Asigna el nombre
-                .apellido(estudiante.getApellido()) // Asigna el apellido
-                .email(estudiante.getEmail()) // Asigna el email
-                .fechaNacimiento(estudiante.getFechaNacimiento()) // Asigna la fecha de nacimiento
-                .numeroInscripcion(estudiante.getNumeroInscripcion()) // Asigna el número de inscripción
-                .estado(estudiante.getEstado()) // Asigna el estado (puede ser null si no se desea mostrar)
-                .usuarioAlta(estudiante.getUsuarioAlta()) // Asigna el usuario de alta
-                .fechaAlta(estudiante.getFechaAlta()) // Asigna la fecha de alta (puede ser null si no se desea mostrar)
-                .usuarioModificacion(estudiante.getUsuarioModificacion()) // Asigna el usuario de modificación
-                .usuarioBaja(estudiante.getUsuarioBaja()) // Asigna el usuario de baja (puede ser null si no se desea mostrar)
-                .fechaBaja(estudiante.getFechaBaja()) // Asigna la fecha de baja (puede ser null si no se desea mostrar)
-                .motivoBaja(estudiante.getMotivoBaja()) // Asigna el motivo de baja (puede ser null si no se desea mostrar)
-                .build(); // Construye el objeto EstudianteDTO
+    private EstudianteDTO convertToDTO(Estudiante estudiante) {
+        return EstudianteDTO.builder()
+            .id(estudiante.getId())
+            .nombre(estudiante.getNombre())
+            .apellido(estudiante.getApellido())
+            .email(estudiante.getEmail())
+            .fechaNacimiento(estudiante.getFechaNacimiento())
+            .numeroInscripcion(estudiante.getNumeroInscripcion())
+            .estado(estudiante.getEstado())
+            .usuarioAlta(estudiante.getUsuarioAlta())
+            .fechaAlta(estudiante.getFechaAlta())
+            .usuarioModificacion(estudiante.getUsuarioModificacion() != null ? estudiante.getUsuarioModificacion() : "")
+            .fechaModificacion(estudiante.getFechaModificacion())
+            .usuarioBaja(estudiante.getUsuarioBaja() != null ? estudiante.getUsuarioBaja() : "")
+            .fechaBaja(estudiante.getFechaBaja())
+            .motivoBaja(estudiante.getMotivoBaja() != null ? estudiante.getMotivoBaja() : "")
+            .build();
     }
+
     
     // Método auxiliar para convertir DTO a entidad
     private Estudiante convertToEntity(EstudianteDTO estudianteDTO) { // Método para convertir un EstudianteDTO a Estudiante
